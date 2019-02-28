@@ -23,6 +23,7 @@ import org.testing.project.entity.Nugget;
 import org.testing.project.entity.NuggetField;
 import org.testing.project.utils.TAR;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import java.util.zip.GZIPOutputStream;
 
@@ -30,6 +31,7 @@ import java.util.zip.GZIPOutputStream;
 public class XmlUpdateRestService {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	public void updateXMLNugget(Nugget nugget) {
 		try {
 			File folder = new File(nugget.getInputFolderPath());
@@ -46,41 +48,49 @@ public class XmlUpdateRestService {
 						DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 						Document doc = docBuilder.parse(file.getAbsolutePath());
 
-						if (StringUtils.isNotBlank(nugget.getCusip())
-								&& doc.getElementsByTagName(NuggetField.CUSIP.nugget()).getLength() > 0)
-							doc.getElementsByTagName(NuggetField.CUSIP.nugget()).item(0)
-									.setTextContent(nugget.getCusip());
-
-						if (StringUtils.isNotBlank(nugget.getInvnum())
-								&& doc.getElementsByTagName(NuggetField.INVNUM.nugget()).getLength() > 0) {
-							Integer result = Integer.valueOf(nugget.getInvnum()).intValue();
-							result = result + j;
-							doc.getElementsByTagName(NuggetField.INVNUM.nugget()).item(0)
-									.setTextContent(String.valueOf(result));
+						NodeList nodeCUSIP = doc.getElementsByTagName(NuggetField.CUSIP.nugget());
+						if (StringUtils.isNotBlank(nugget.getCusip()) && nodeCUSIP.getLength() > 0) {
+							for (int i = 0; i < nodeCUSIP.getLength(); i++) {
+								nodeCUSIP.item(i).setTextContent(nugget.getCusip());
+							}
 						}
 
-						if (StringUtils.isNotBlank(nugget.getPortfoliosPortfolioName()) && doc
-								.getElementsByTagName(NuggetField.PORTFOLIOS_PORTFOLIO_NAME.nugget()).getLength() > 0)
-							doc.getElementsByTagName(NuggetField.PORTFOLIOS_PORTFOLIO_NAME.nugget()).item(0)
-									.setTextContent(nugget.getPortfoliosPortfolioName());
+						NodeList nodeINVNUM = doc.getElementsByTagName(NuggetField.INVNUM.nugget());
+						if (StringUtils.isNotBlank(nugget.getInvnum()) && nodeINVNUM.getLength() > 0) {
+							Integer result = Integer.valueOf(nugget.getInvnum()).intValue();
+							result = result + j;
+							for (int i = 0; i < nodeINVNUM.getLength(); i++) {
+								nodeINVNUM.item(i).setTextContent(String.valueOf(result));
+							}
+						}
 
-						if (StringUtils.isNotBlank(nugget.getTouchCount())
-								&& doc.getElementsByTagName(NuggetField.TOUCH_COUNT.nugget()).getLength() > 0) {
-							doc.getElementsByTagName(NuggetField.TOUCH_COUNT.nugget()).item(0)
-									.setTextContent(nugget.getTouchCount());
+						NodeList nodeportfolioname = doc
+								.getElementsByTagName(NuggetField.PORTFOLIOS_PORTFOLIO_NAME.nugget());
+						if (StringUtils.isNotBlank(nugget.getPortfoliosPortfolioName())
+								&& nodeportfolioname.getLength() > 0) {
+							for (int i = 0; i < nodeportfolioname.getLength(); i++) {
+								nodeportfolioname.item(i).setTextContent(nugget.getPortfoliosPortfolioName());
+							}
+						}
+
+						NodeList nodetouchcount = doc.getElementsByTagName(NuggetField.TOUCH_COUNT.nugget());
+						if (StringUtils.isNotBlank(nugget.getTouchCount()) && nodetouchcount.getLength() > 0) {
+							for (int i = 0; i < nodeportfolioname.getLength(); i++) {
+								nodeportfolioname.item(i).setTextContent(nugget.getTouchCount());
+							}
 						}
 						TransformerFactory transformerFactory = TransformerFactory.newInstance();
 						Transformer transformer = transformerFactory.newTransformer();
 						DOMSource source = new DOMSource(doc);
 						new File(path).mkdirs();
 						StreamResult result = new StreamResult(new File(path + "/" + filename));
-						transformer.transform(source, result);	
+						transformer.transform(source, result);
 					}
 				}
-				TAR.compress(path+ ".tar", new File(path));
-				TAR.gzipFile(path+ ".tar", path+ ".gzip");
-			//	Files.deleteIfExists(Paths.get(path+ ".tar"));
-			}	
+				TAR.compress(path + ".tar", new File(path));
+				TAR.gzipFile(path + ".tar", path + ".gzip");
+				// Files.deleteIfExists(Paths.get(path+ ".tar"));
+			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (TransformerException e) {
