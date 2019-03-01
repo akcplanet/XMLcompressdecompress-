@@ -2,8 +2,6 @@ package org.testing.project.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -16,16 +14,18 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang3.StringUtils;
+import org.rauschig.jarchivelib.ArchiveFormat;
+import org.rauschig.jarchivelib.Archiver;
+import org.rauschig.jarchivelib.ArchiverFactory;
+import org.rauschig.jarchivelib.CompressionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.testing.project.entity.Nugget;
 import org.testing.project.entity.NuggetField;
-import org.testing.project.utils.TAR;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import java.util.zip.GZIPOutputStream;
 
 @Service
 public class XmlUpdateRestService {
@@ -39,7 +39,8 @@ public class XmlUpdateRestService {
 			int nCount = nugget.getNuggetCount() > 1 ? nugget.getNuggetCount() : 1;
 			for (int j = 0; j < nCount; j++) {
 				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-				String path = (nugget.getOutputFolderPath() + "/" + timestamp.getTime());
+				String foldername = "/PERF" + timestamp.getTime();
+				String path = (nugget.getOutputFolderPath() + foldername);
 				logger.debug(path);
 				for (File file : listOfFiles) {
 					String filename = file.getName();
@@ -87,9 +88,10 @@ public class XmlUpdateRestService {
 						transformer.transform(source, result);
 					}
 				}
-				TAR.compress(path + ".tar", new File(path));
-				TAR.gzipFile(path + ".tar", path + ".gzip");
-				// Files.deleteIfExists(Paths.get(path+ ".tar"));
+			//	Archiver tar = ArchiverFactory.createArchiver(ArchiveFormat.TAR);
+				Archiver gzip = ArchiverFactory.createArchiver(ArchiveFormat.TAR, CompressionType.GZIP);
+			//	tar.create(foldername, new File(nugget.getOutputFolderPath()), new File(path));
+				gzip.create(foldername, new File(nugget.getOutputFolderPath()+ "/executivefile"), new File(path));
 			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();

@@ -10,7 +10,6 @@ public class Nugget implements Serializable {
 	private String invnum;
 	private String portfoliosPortfolioName;
 	private String touchCount;
-	private String folderNo;
 	private String inputFolderPath;
 	private String outputFolderPath;
 	private int nuggetCount = 1;
@@ -47,14 +46,6 @@ public class Nugget implements Serializable {
 		this.touchCount = touchCount;
 	}
 
-	public String getFolderNo() {
-		return folderNo;
-	}
-
-	public void setFolderNo(String folderNo) {
-		this.folderNo = folderNo;
-	}
-
 	public String getInputFolderPath() {
 		return inputFolderPath;
 	}
@@ -84,7 +75,6 @@ public class Nugget implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((cusip == null) ? 0 : cusip.hashCode());
-		result = prime * result + ((folderNo == null) ? 0 : folderNo.hashCode());
 		result = prime * result + ((inputFolderPath == null) ? 0 : inputFolderPath.hashCode());
 		result = prime * result + ((invnum == null) ? 0 : invnum.hashCode());
 		result = prime * result + nuggetCount;
@@ -107,11 +97,6 @@ public class Nugget implements Serializable {
 			if (other.cusip != null)
 				return false;
 		} else if (!cusip.equals(other.cusip))
-			return false;
-		if (folderNo == null) {
-			if (other.folderNo != null)
-				return false;
-		} else if (!folderNo.equals(other.folderNo))
 			return false;
 		if (inputFolderPath == null) {
 			if (other.inputFolderPath != null)
@@ -146,8 +131,8 @@ public class Nugget implements Serializable {
 	@Override
 	public String toString() {
 		return "Nugget [cusip=" + cusip + ", invnum=" + invnum + ", portfoliosPortfolioName=" + portfoliosPortfolioName
-				+ ", touchCount=" + touchCount + ", folderNo=" + folderNo + ", inputFolderPath=" + inputFolderPath
-				+ ", outputFolderPath=" + outputFolderPath + ", nuggetCount=" + nuggetCount + "]";
+				+ ", touchCount=" + touchCount + ", inputFolderPath=" + inputFolderPath + ", outputFolderPath="
+				+ outputFolderPath + ", nuggetCount=" + nuggetCount + "]";
 	}
 
 }

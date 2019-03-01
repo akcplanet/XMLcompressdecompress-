@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.testing.project.entity.Nugget;
@@ -32,7 +33,26 @@ public class XmlUpdateRestController {
 	}
 
 	@GetMapping
-	public @ResponseBody ResponseEntity<?> getXMLNugget() {
+	public @ResponseBody ResponseEntity<?> getXMLNugget(@RequestParam("cusip") String cusip,
+			@RequestParam("invnum") String invnum, @RequestParam("portfolioName") String portfoliosPortfolioName,
+			@RequestParam("touchCount") String touchCount, @RequestParam("inputFolderPath") String inputFolderPath,
+			@RequestParam("outputFolderPath") String outputFolderPath,
+			@RequestParam("nuggetCount") String nuggetCount) {
+		Nugget nugget = new Nugget();
+		nugget.setCusip(cusip);
+		nugget.setInvnum(invnum);
+		nugget.setPortfoliosPortfolioName(portfoliosPortfolioName);
+		nugget.setTouchCount(touchCount);
+		nugget.setInputFolderPath(inputFolderPath);
+		nugget.setOutputFolderPath(outputFolderPath);
+		nugget.setNuggetCount(Integer.valueOf(nuggetCount));
+		logger.info("Logging in @RestController Update Nugget : " + nugget);
+		xmlUpdateRestService.updateXMLNugget(nugget);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@GetMapping("/main")
+	public @ResponseBody ResponseEntity<?> mainXMLNugget() {
 		Nugget nugget = new Nugget();
 		nugget.setCusip("500TESTCUSIPTEST");
 		nugget.setInvnum("500");
